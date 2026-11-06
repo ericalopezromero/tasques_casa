@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Neteja">
+<meta name="theme-color" content="#f3f1f8">
+<title>Neteja de casa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f3f1f8; --card:#fff; --ink:#1e2235; --mute:#6b6f86; --line:#e2dff0;
+  --cuina:#f2b544; --menjador:#6fa58a; --habitacions:#a98ee0; --lavabo:#62b0d8;
+  --erica:#c93f65; --julia:#2f7f8f;
+  --ok:#2e7d5b; --mig:#b0700a; --alt:#c2352f;
+}
+@media (prefers-color-scheme:dark){
+  :root{--bg:#151726; --card:#1f2236; --ink:#eef0fa; --mute:#9a9eb8; --line:#2d3150;
+        --erica:#ee7a9b; --julia:#5cc0d0; --ok:#6fd0a0; --mig:#f0b95a; --alt:#ff8a82}
+}
+*{box-sizing:border-box;margin:0}
+html{-webkit-text-size-adjust:100%}
+body{font-family:"Bricolage Grotesque",system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--ink);line-height:1.4;
+  padding:max(18px,env(safe-area-inset-top)) 16px max(32px,env(safe-area-inset-bottom))}
+main{max-width:640px;margin:0 auto}
+h1{font-size:2rem;font-weight:800;letter-spacing:-.02em}
+.sub{color:var(--mute);margin-top:2px}
+button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.who{display:flex;gap:8px;margin:16px 0 14px}
+.who button{flex:1;padding:10px;border-radius:999px;border:2px solid var(--line);background:transparent;font-weight:600}
+.who button[aria-pressed=true]{color:#fff;border-color:transparent}
+.who button[data-p=Erica][aria-pressed=true]{background:var(--erica)}
+.who button[data-p=Júlia][aria-pressed=true]{background:var(--julia)}
+.tabs{display:flex;background:var(--line);border-radius:14px;padding:4px;margin-bottom:18px}
+.tabs button{flex:1;border:0;background:transparent;padding:9px;border-radius:10px;font-weight:600;color:var(--mute)}
+.tabs button[aria-selected=true]{background:var(--card);color:var(--ink)}
+.total{margin-bottom:20px}
+.bar{height:10px;border-radius:99px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--ink);border-radius:99px;transition:width .35s}
+.total p{font-size:.92rem;color:var(--mute);margin-top:6px}
+.room{background:var(--card);border-radius:22px;margin-bottom:16px;overflow:hidden;border:1px solid var(--line)}
+.room>.top{padding:16px 18px 14px;background:var(--c);color:#1e2235}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.room h2{font-size:1.45rem;font-weight:800;letter-spacing:-.01em}
+.tag{font-size:.85rem;font-weight:600;padding:4px 12px;border-radius:99px;background:#fff;color:#1e2235}
+.room .bar{margin-top:12px;background:rgba(255,255,255,.55)}
+.room .bar i{background:#1e2235}
+.room .res{font-size:.88rem;margin-top:8px;font-weight:600}
+h3{font-size:.95rem;font-weight:600;color:var(--mute);padding:14px 18px 2px}
+ul{list-style:none;padding:6px 8px 10px}
+li{display:flex;align-items:center;gap:4px}
+li label{flex:1;display:flex;align-items:center;gap:14px;padding:12px 10px;border-radius:14px;cursor:pointer;min-width:0}
+li label:active{background:var(--line)}
+input{position:absolute;opacity:0;pointer-events:none}
+.box{flex:none;width:28px;height:28px;border-radius:9px;border:2.5px solid var(--mute);display:grid;place-items:center;
+  font-weight:800;font-size:1.1rem;line-height:1;color:transparent;transition:background .15s,border-color .15s}
+input:checked+.box{background:var(--c);border-color:var(--c);color:#1e2235}
+input:checked+.box::before{content:"✕"}
+input:focus-visible+.box{outline:3px solid var(--ink);outline-offset:2px}
+.tx{display:flex;flex-direction:column;min-width:0}
+.t{font-size:1.05rem}
+input:checked~.tx .t{color:var(--mute);text-decoration:line-through;text-decoration-thickness:1.5px}
+.b{font-size:.8rem;font-weight:600}
+.b.ok{color:var(--ok)}.b.mig{color:var(--mig)}.b.alt{color:var(--alt)}.b.n{color:var(--mute);font-weight:400}
+.min{flex:none;border:1.5px dashed var(--line);background:transparent;border-radius:10px;padding:6px 10px;font-size:.85rem;color:var(--mute);margin-right:4px}
+.min:active{background:var(--line)}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.chips button{padding:8px 14px;border-radius:99px;border:2px solid var(--line);background:transparent;font-weight:600}
+.chips button[aria-pressed=true]{background:var(--c);border-color:var(--c);color:#1e2235}
+.cal{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:14px;margin-bottom:14px}
+.cal .row{margin-bottom:10px}
+.cal .row strong{font-size:1.15rem;text-transform:capitalize}
+.nav{display:flex;gap:6px}
+.nav button{width:40px;height:40px;border-radius:12px;border:1.5px solid var(--line);background:transparent;font-size:1.1rem}
+.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center}
+.grid>span{font-size:.75rem;color:var(--mute);padding-bottom:2px}
+.dia{aspect-ratio:1;border:0;border-radius:12px;background:transparent;position:relative;font-size:.95rem}
+.dia.fet{background:var(--c);color:#1e2235;font-weight:700}
+.dia b{position:absolute;right:3px;top:1px;font-size:.62rem}
+.dia.avui{box-shadow:inset 0 0 0 2px var(--ink)}
+.dia.sel{outline:3px solid var(--ink);outline-offset:1px}
+.det{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px 18px;margin-bottom:14px}
+.det h4{font-size:1rem;margin-bottom:6px}
+.det li{padding:3px 0}
+.det ul{padding:0}
+.ult{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:12px 18px}
+.ult h4{margin-bottom:4px}
+.ult li{justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--line)}
+.ult li:last-child{border:0}
+.ult ul{padding:0}
+footer{color:var(--mute);font-size:.8rem;text-align:center;margin-top:24px}
+footer p{margin-bottom:8px}
+#estat{display:inline-block;padding:2px 10px;border-radius:99px;border:1px solid var(--line)}
+[hidden]{display:none!important}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Neteja de casa</h1>
+    <p class="sub" id="cicle"></p>
+    <div class="who" role="group" aria-label="Qui ets?">
+      <button data-p="Erica" aria-pressed="false">Sóc l’Erica</button>
+      <button data-p="Júlia" aria-pressed="false">Sóc la Júlia</button>
+    </div>
+  </header>
+  <div class="tabs" role="tablist">
+    <button role="tab" data-v="tasques" aria-selected="true">Tasques</button>
+    <button role="tab" data-v="historial" aria-selected="false">Historial</button>
+  </div>
+
+  <div id="vTasques">
+    <section class="total" aria-live="polite">
+      <div class="bar"><i id="totalBar"></i></div>
+      <p id="totalTxt"></p>
+    </section>
+    <div id="rooms"></div>
+  </div>
+
+  <div id="vHist" hidden></div>
+
+  <footer>
+    <p>Dies des de l’última vegada: <span style="color:var(--ok)">verd</span> al dia · <span style="color:var(--mig)">taronja</span> s’acosta · <span style="color:var(--alt)">vermell</span> toca ja.<br>Toca els minuts d’una tasca per canviar-los.</p>
+    <span id="estat"></span>
+  </footer>
+</main>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+/* ============ 1) CONFIGURACIÓ FIREBASE ============
+   Enganxa aquí el teu firebaseConfig. Mentre digui "POSA-AQUI", funciona només en mode local. */
+const firebaseConfig = {
+  apiKey: "POSA-AQUI",
+  authDomain: "POSA-AQUI",
+  projectId: "POSA-AQUI",
+  appId: "POSA-AQUI"
+};
+
+/* ============ 2) ROTACIÓ ============
+   Dilluns de la setmana d'inici. Cicle 0: Erica = cuina + menjador, Júlia = lavabo + habitacions. */
+const INICI = new Date(2026, 10, 2); // 2 nov 2026 (mes de 0 a 11)
+
+/* ============ 3) TASQUES ============
+   [clau, nom, minuts estimats, cada quants dies hauria de fer-se]
+   Els minuts es poden canviar també des de la web (tocant-los). */
+const R = (id, nom, c, grup, files) => {
+  let h = "";
+  const rows = files.map(f => {
+    if (typeof f === "string") { h = f; return {h: f}; }
+    const [k, n, min, fr] = f;
+    return {id: id + "_" + k, nom: n, nl: h ? `${n} (${h.toLowerCase()})` : n, min, f: fr};
+  });
+  return {id, nom, c, grup, rows, tasks: rows.filter(x => x.id)};
+};
+const ESTANCIES = [
+  R("cuina", "Cuina", "var(--cuina)", 0, [
+    ["fogons","Fogons",15,7], ["nevera","Nevera",15,30], ["airfryer","Airfryer",10,14],
+    ["escombrar","Terra (escombrar)",5,7], ["fregar","Terra (fregar)",10,7],
+    ["pica","Pica + encimera",10,7], ["microones","Microones",5,14], ["escuraplats","Escuraplats",5,14]]),
+  R("menjador", "Menjador", "var(--menjador)", 0, [
+    ["pols","Pols",10,7], ["ordenar","Ordenar",10,7],
+    ["escombrar","Terra (escombrar)",5,7], ["fregar","Terra (fregar)",10,7]]),
+  R("habitacions", "Habitacions", "var(--habitacions)", 1, [
+    "Habitació petita",
+    ["p_pols","Pols",5,7], ["p_escombrar","Terra (escombrar)",5,7], ["p_fregar","Terra (fregar)",5,7], ["p_ordenar","Ordenar",10,7],
+    "Habitació gran",
+    ["g_pols","Pols",10,7], ["g_escombrar","Terra (escombrar)",5,7], ["g_fregar","Terra (fregar)",10,7], ["g_ordenar","Ordenar",10,7]]),
+  R("lavabo", "Lavabo", "var(--lavabo)", 1, [
+    ["vater","Vàter",10,7], ["mirall","Mirall",5,14], ["pica","Pica",5,7],
+    ["escombrar","Terra (escombrar)",5,7], ["fregar","Terra (fregar)",5,7], ["dutxa","Dutxa",15,7]])
+];
+
+/* ---------- dates ---------- */
+const DIA = 864e5;
+const MESOS = ["gener","febrer","març","abril","maig","juny","juliol","agost","setembre","octubre","novembre","desembre"];
+const pad = n => String(n).padStart(2, "0");
+const ymd = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const parse = s => { const [y,m,d] = s.split("-").map(Number); return new Date(y, m-1, d); };
+const avui = new Date(); avui.setHours(0,0,0,0);
+const cicleDe = d => Math.floor(Math.round((d - INICI) / DIA) / 14);
+const cicle = cicleDe(avui), kc = "cicle-" + cicle;
+const diaCicle = (((Math.round((avui - INICI) / DIA)) % 14) + 14) % 14;
+const resp = (g, c = cicle) => (g === 0) === (((c % 2) + 2) % 2 === 0) ? "Erica" : "Júlia";
+
+/* ---------- estat ---------- */
+let cicles = {};   // {"cicle-0": {idTasca: "2026-11-06"}}
+let temps = {};    // {idTasca: minuts}
+let jo = localStorage.getItem("jo") || "";
+let vista = "tasques", histRoom = "cuina", mes = new Date(avui.getFullYear(), avui.getMonth(), 1), diaSel = ymd(avui);
+const estat = document.getElementById("estat");
+const minuts = t => (typeof temps[t.id] === "number" ? temps[t.id] : t.min);
+const fmt = m => m >= 60 ? `${Math.floor(m/60)} h${m % 60 ? " " + (m % 60) + " min" : ""}` : `${m} min`;
+
+/* ---------- sincronització ---------- */
+const configurat = !Object.values(firebaseConfig).some(v => String(v).startsWith("POSA"));
+let col = null;
+const guardaLocal = () => localStorage.setItem("neteja-v2", JSON.stringify({cicles, temps}));
+
+if (configurat && window.firebase) {
+  firebase.initializeApp(firebaseConfig);
+  col = firebase.firestore().collection("neteja");
+  col.onSnapshot(
+    qs => {
+      cicles = {}; temps = {};
+      qs.forEach(d => { if (d.id === "temps") temps = d.data(); else cicles[d.id] = d.data(); });
+      estat.textContent = "Sincronitzat ✓"; pinta();
+    },
+    () => { estat.textContent = "Sense connexió amb la base de dades"; }
+  );
+} else {
+  try { ({cicles, temps} = JSON.parse(localStorage.getItem("neteja-v2")) || {cicles: {}, temps: {}}); } catch {}
+  cicles = cicles || {}; temps = temps || {};
+  estat.textContent = "Mode local (sense sincronitzar)";
+}
+
+function marca(id, on) {
+  const v = ymd(avui);
+  cicles[kc] = cicles[kc] || {};
+  if (on) cicles[kc][id] = v; else delete cicles[kc][id];
+  if (col) col.doc(kc).set({[id]: on ? v : firebase.firestore.FieldValue.delete()}, {merge: true});
+  else guardaLocal();
+  pinta();
+}
+function posaTemps(id, m) {
+  temps[id] = m;
+  if (col) col.doc("temps").set({[id]: m}, {merge: true}); else guardaLocal();
+  pinta();
+}
+
+/* ---------- càlculs ---------- */
+function ultima(id) {
+  let m = "";
+  for (const c in cicles) { const v = cicles[c][id]; if (typeof v === "string" && v > m) m = v; }
+  return m;
+}
+function badge(t) {
+  const u = ultima(t.id);
+  if (!u) return {txt: "sense registre", cls: "n"};
+  const d = Math.round((avui - parse(u)) / DIA), r = d / t.f;
+  return {txt: d === 0 ? "avui" : d === 1 ? "ahir" : `fa ${d} dies`, cls: r < .75 ? "ok" : r < 1 ? "mig" : "alt"};
+}
+
+/* ---------- pintar ---------- */
+function pinta() {
+  const resten = 14 - diaCicle;
+  document.getElementById("cicle").textContent =
+    `Setmana ${Math.floor(diaCicle / 7) + 1} de 2 · canvi de torn d’aquí a ${resten} ${resten === 1 ? "dia" : "dies"}`;
+  document.querySelectorAll(".who button").forEach(b => b.setAttribute("aria-pressed", b.dataset.p === jo));
+  document.querySelectorAll(".tabs button").forEach(b => b.setAttribute("aria-selected", b.dataset.v === vista));
+  document.getElementById("vTasques").hidden = vista !== "tasques";
+  document.getElementById("vHist").hidden = vista !== "historial";
+  if (vista === "tasques") pintaTasques(); else pintaHist();
+}
+
+function pintaTasques() {
+  const cur = cicles[kc] || {};
+  const vis = ESTANCIES.filter(e => !jo || resp(e.grup) === jo);
+  let total = 0, fetes = 0, resta = 0;
+  document.getElementById("rooms").innerHTML = vis.map(e => {
+    let n = 0, f = 0, rest = 0, html = "";
+    e.rows.forEach(r => {
+      if (r.h) { html += `<h3>${r.h}</h3>`; return; }
+      const on = typeof cur[r.id] === "string", m = minuts(r), b = badge(r);
+      n++; if (on) f++; else rest += m;
+      html += `<li><label><input type="checkbox" data-id="${r.id}" ${on ? "checked" : ""}><span class="box" aria-hidden="true"></span>
+        <span class="tx"><span class="t">${r.nom}</span><span class="b ${b.cls}">${b.txt}</span></span></label>
+        <button class="min" data-t="${r.id}" aria-label="Minuts de ${r.nom}">${m} min</button></li>`;
+    });
+    total += n; fetes += f; resta += rest;
+    return `<section class="room" style="--c:${e.c}">
+      <div class="top"><div class="row"><h2>${e.nom}</h2><span class="tag">${resp(e.grup)}</span></div>
+      <div class="bar"><i style="width:${Math.round(f / n * 100)}%"></i></div>
+      <p class="res">${f === n ? "Feta! ✓" : `${f} de ${n} · queden ${fmt(rest)}`}</p></div>
+      <ul>${html}</ul></section>`;
+  }).join("");
+  document.getElementById("totalBar").style.width = (total ? Math.round(fetes / total * 100) : 0) + "%";
+  document.getElementById("totalTxt").textContent = resta
+    ? `${fetes} de ${total} tasques fetes · queden ${fmt(resta)} en total`
+    : `${fetes} de ${total} tasques fetes · tot llest!`;
+}
+
+function pintaHist() {
+  const e = ESTANCIES.find(x => x.id === histRoom);
+  const perDia = {};
+  for (const c in cicles) for (const id in cicles[c]) {
+    const v = cicles[c][id], t = e.tasks.find(x => x.id === id);
+    if (t && typeof v === "string") (perDia[v] = perDia[v] || []).push(t);
+  }
+  const y = mes.getFullYear(), m = mes.getMonth();
+  const buit = (new Date(y, m, 1).getDay() + 6) % 7, nd = new Date(y, m + 1, 0).getDate();
+  let cel = ["dl","dt","dc","dj","dv","ds","dg"].map(d => `<span>${d}</span>`).join("") + "<span></span>".repeat(buit);
+  for (let d = 1; d <= nd; d++) {
+    const k = ymd(new Date(y, m, d)), n = (perDia[k] || []).length;
+    cel += `<button class="dia ${n ? "fet" : ""} ${k === ymd(avui) ? "avui" : ""} ${k === diaSel ? "sel" : ""}" data-d="${k}">${d}${n ? `<b>${n}</b>` : ""}</button>`;
+  }
+  const dets = perDia[diaSel] || [], dd = parse(diaSel);
+  const quan = `${dd.getDate()} de ${MESOS[dd.getMonth()]}`;
+  const det = dets.length
+    ? `<h4>${quan} · ${resp(e.grup, cicleDe(dd))}</h4><ul>${dets.map(t => `<li>✕ ${t.nl}</li>`).join("")}</ul>`
+    : `<h4>${quan}</h4><p class="sub">Cap tasca de ${e.nom.toLowerCase()} aquest dia.</p>`;
+  document.getElementById("vHist").innerHTML = `
+    <div class="chips" role="group" aria-label="Estança">${ESTANCIES.map(x =>
+      `<button data-r="${x.id}" style="--c:${x.c}" aria-pressed="${x.id === histRoom}">${x.nom}</button>`).join("")}</div>
+    <div class="cal" style="--c:${e.c}">
+      <div class="row"><strong>${MESOS[m]} ${y}</strong>
+        <div class="nav"><button data-m="-1" aria-label="Mes anterior">‹</button><button data-m="1" aria-label="Mes següent">›</button></div></div>
+      <div class="grid">${cel}</div></div>
+    <div class="det">${det}</div>
+    <div class="ult"><h4>Última vegada · ${e.nom}</h4><ul>${e.tasks.map(t => {
+      const b = badge(t); return `<li><span>${t.nl}</span><span class="b ${b.cls}">${b.txt}</span></li>`; }).join("")}</ul></div>`;
+}
+
+/* ---------- events ---------- */
+document.getElementById("rooms").addEventListener("change", e => {
+  if (e.target.dataset.id) marca(e.target.dataset.id, e.target.checked);
+});
+document.getElementById("rooms").addEventListener("click", e => {
+  const b = e.target.closest(".min"); if (!b) return;
+  const t = ESTANCIES.flatMap(x => x.tasks).find(x => x.id === b.dataset.t);
+  const r = prompt(`Quants minuts es tarda a fer «${t.nom}»?`, minuts(t));
+  const n = r === null ? NaN : parseInt(r, 10);
+  if (n >= 0 && n <= 600) posaTemps(t.id, n);
+});
+document.querySelector(".who").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  jo = jo === b.dataset.p ? "" : b.dataset.p;
+  localStorage.setItem("jo", jo);
+  if (jo) { const mia = ESTANCIES.find(x => resp(x.grup) === jo); histRoom = mia.id; }
+  pinta();
+});
+document.querySelector(".tabs").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (b) { vista = b.dataset.v; pinta(); }
+});
+document.getElementById("vHist").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  if (b.dataset.r) histRoom = b.dataset.r;
+  if (b.dataset.m) mes = new Date(mes.getFullYear(), mes.getMonth() + Number(b.dataset.m), 1);
+  if (b.dataset.d) diaSel = b.dataset.d;
+  pinta();
+});
+
+if (jo) histRoom = (ESTANCIES.find(x => resp(x.grup) === jo) || ESTANCIES[0]).id;
+pinta();
+</script>
+</body>
+</html>
